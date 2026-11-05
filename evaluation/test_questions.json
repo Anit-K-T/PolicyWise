@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "question": "What is the annual leave entitlement?",
+    "expected_behavior": "Answer using the relevant HR policy and cite the source page."
+  },
+  {
+    "id": 2,
+    "question": "What is the sick leave policy?",
+    "expected_behavior": "Retrieve relevant sick leave information with citations."
+  },
+  {
+    "id": 3,
+    "question": "What is the procedure for applying for leave?",
+    "expected_behavior": "Explain the procedure based on the provided policy."
+  },
+  {
+    "id": 4,
+    "question": "What is the employee notice period?",
+    "expected_behavior": "Provide the notice period with its source and page number."
+  },
+  {
+    "id": 5,
+    "question": "What is the company's policy on providing free international holiday trips to employees?",
+    "expected_behavior": "Return 'Not specified in the provided policies.' if the policies do not contain this information."
+  }
+]
