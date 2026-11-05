@@ -1,62 +1,183 @@
+# PolicyWise – Source-Grounded HR Policy Assistant
 
+**Group 1 Project**
 
-# PolicyWise — Group 1
+PolicyWise is an AI-powered HR Policy Assistant that helps employees find information from company HR policy documents using natural-language questions.
 
-A runnable HR-policy RAG prototype using the four Group 1 policy PDFs. It extracts page-level text, chunks it, retrieves the top 3 relevant passages, and displays source filename/page citations. Unanswerable queries use the required fallback.
+The system uses a Retrieval-Augmented Generation (RAG) approach to retrieve relevant policy passages and generate answers grounded in the provided documents. It also provides source citations, including PDF filenames and page numbers, to improve transparency and reliability.
 
-## Run locally
+## Project Objectives
+
+- Simplify access to HR policy information.
+- Allow employees to ask questions in natural language.
+- Retrieve relevant information from multiple HR policy PDFs.
+- Generate answers grounded in the provided policy documents.
+- Display source filenames and page numbers.
+- Avoid unsupported answers through a predefined fallback response.
+
+## Key Features
+
+- PDF-based HR policy knowledge base.
+- Page-level text extraction and metadata preservation.
+- Text chunking with overlapping sections.
+- Top-3 relevant passage retrieval.
+- Current policy prioritization over superseded versions.
+- Grounded answer generation.
+- Source document and page citations.
+- Fallback handling for unsupported questions.
+- Optional OpenAI-based answer generation.
+- Streamlit-based user interface.
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Programming Language | Python |
+| Frontend | Streamlit |
+| PDF Processing | PyMuPDF |
+| Text Chunking | LangChain Text Splitters |
+| Retrieval | TF-IDF and Cosine Similarity |
+| Answer Generation | Optional OpenAI API |
+| Version Control | Git and GitHub |
+
+## Project Architecture
+
+The system follows this workflow:
+
+**HR Policy PDFs → Document Ingestion → Text Chunking → Retrieval → Answer Generation → Source-Cited Response**
+
+Refer to [System Architecture](docs/architecture.md) for further details.
+
+## Project Structure
+
+```text
+PolicyWise/
+│
+├── data/
+│   ├── G1_policy_1.pdf
+│   ├── G1_policy_2.pdf
+│   ├── G1_policy_3.pdf
+│   └── G1_policy_4.pdf
+│
+├── src/
+│   ├── ingestion.py
+│   ├── retrieval.py
+│   └── answer_generator.py
+│
+├── evaluation/
+│   ├── test_questions.json
+│   └── test_results.md
+│
+├── docs/
+│   └── architecture.md
+│
+├── app.py
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
+
+*The structure may be updated as the implementation progresses.*
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Anit-K-T/PolicyWise.git
+cd PolicyWise
+```
+
+### 2. Create a virtual environment
+
 ```bash
 python -m venv .venv
-# Windows: .venv\\Scripts\\activate
-# macOS/Linux: source .venv/bin/activate
+```
+
+### 3. Activate the environment
+
+**Windows PowerShell:**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+### 4. Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+### 5. Run the application
+
+```bash
 streamlit run app.py
 ```
-Open the local Streamlit URL. The default works without an API key. It returns source excerpts as grounded evidence. To enable synthesized answers, copy `.env.example` to `.env`, set `OPENAI_API_KEY`, export the variables in your shell, and tick the OpenAI checkbox in the sidebar.
 
-## Architecture
-PDFs → `src/ingestion.py` (text + page/file metadata, overlap, duplicate hash) → `src/retrieval.py` (TF-IDF similarity, top 3, current policy preference) → `src/answer_generator.py` (grounded answer / fallback + citations) → `app.py` (Streamlit UI).
+Open the local Streamlit URL displayed in the terminal.
 
-## RAG Retrieval & Answer Generation
+## Answer Generation
 
-This contribution implements the retrieval and answer-generation components of the PolicyWise HR Policy RAG prototype.
+PolicyWise supports two answer-generation modes:
 
-### Files Updated
+**Default Mode**
+- Uses retrieved policy passages as evidence.
+- Displays relevant policy excerpts.
+- Does not require an API key.
 
-- `src/retrieval.py`
-- `src/answer_generator.py`
+**Optional OpenAI Mode**
+- Uses an OpenAI model to generate a synthesized response.
+- Answers are instructed to remain grounded in retrieved policy excerpts.
+- Requires an OpenAI API key configured through environment variables.
 
-### What Implemented
+## Fallback Handling
 
-**1. `src/retrieval.py` — RAG Retrieval**
+When the requested information cannot be supported by the provided policy documents, the system uses the following response:
 
-- Implemented TF-IDF-based similarity retrieval.
-- Retrieves the top 3 relevant policy passages for a given question.
-- Supports ranking based on current and superseded policy versions.
-- Returns relevant chunk data, including text, source filename, page number, version, and similarity score.
+`Not specified in the provided policies.`
 
-**2. `src/answer_generator.py` — Answer Generation**
+## Evaluation and Testing
 
-- Generates answers grounded in retrieved policy passages.
-- Includes source filename and page citations.
-- Implements a fallback response for questions that cannot be answered using the available policy documents.
-- Supports optional LLM-based answer generation.
+The project includes an evaluation dataset and results template.
 
-**3. `.gitignore`**
+- `evaluation/test_questions.json` – Contains questions used to test the system.
+- `evaluation/test_results.md` – Records expected results, actual results and test status.
 
-- Added rules to exclude environment files, virtual environments, cache files, and other unnecessary files from Git tracking.
+The system will be evaluated based on:
 
-**4. `requirements.txt`**
+1. Answer accuracy.
+2. Retrieval relevance.
+3. Source citation correctness.
+4. Unsupported-question handling.
+5. Current and superseded policy prioritization.
 
-- Updated the project dependencies required for retrieval and answer generation.
+## Team Contributions
 
-### Integration
+| Team Member | Responsibility |
+|---|---|
+| Anit | Team Lead, Streamlit frontend, integration, testing and documentation |
+| Arun | PDF ingestion, text extraction and chunking |
+| Aamir | RAG retrieval and answer generation |
+| Niranjan | Test-question preparation and evaluation support |
 
-The retrieval and answer-generation modules integrate with the ingestion component through the shared chunk dictionary structure.
+## Reliability and Safety
 
-The implementation supports the required RAG workflow:
+- Answers should be based on the provided HR policy documents.
+- Source filenames and page references should be preserved.
+- Unsupported information should not be fabricated.
+- Superseded policy information should be distinguished from current policy.
+- API keys and other credentials must not be committed to GitHub.
 
-`Question → Retrieval → Top 3 Relevant Passages → Grounded Answer → Source Citations`
+## Project Status
 
-The default implementation works without an OpenAI API key. Optional LLM-based generation can be enabled when the API key is configured.
+PolicyWise is under development. Document ingestion, retrieval, answer generation and frontend components are being integrated and tested.
 
+## Repository
+
+[PolicyWise – GitHub Repository](https://github.com/Anit-K-T/PolicyWise)
