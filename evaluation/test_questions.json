@@ -1,27 +1,58 @@
 [
   {
-    "id": 1,
-    "question": "What is the annual leave entitlement?",
-    "expected_behavior": "Answer using the relevant HR policy and cite the source page."
+    "id": "TC01",
+    "question": "What is the hotel accommodation limit for Tier 1 cities?",
+    "expected_answer": "INR 6000 per night, including tax.",
+    "expected_source": "G1_policy_1.pdf",
+    "expected_page": 1
   },
   {
-    "id": 2,
-    "question": "What is the sick leave policy?",
-    "expected_behavior": "Retrieve relevant sick leave information with citations."
+    "id": "TC02",
+    "question": "How many remote working days can a full-time employee request per month?",
+    "expected_answer": "Up to 8 days per calendar month with manager approval.",
+    "expected_source": "G1_policy_2.pdf",
+    "expected_page": 1
   },
   {
-    "id": 3,
-    "question": "What is the procedure for applying for leave?",
-    "expected_behavior": "Explain the procedure based on the provided policy."
+    "id": "TC03",
+    "question": "Within how many days must employees submit expense receipts?",
+    "expected_answer": "Within 30 calendar days of purchase.",
+    "expected_source": "G1_policy_3.pdf",
+    "expected_page": 1
   },
   {
-    "id": 4,
-    "question": "What is the employee notice period?",
-    "expected_behavior": "Provide the notice period with its source and page number."
+    "id": "TC04",
+    "question": "Who must approve business-class airfare before booking?",
+    "expected_answer": "The CFO must provide written approval before booking.",
+    "expected_source": "G1_policy_1.pdf",
+    "expected_page": 1
   },
   {
-    "id": 5,
-    "question": "What is the company's policy on providing free international holiday trips to employees?",
-    "expected_behavior": "Return 'Not specified in the provided policies.' if the policies do not contain this information."
+    "id": "TC05",
+    "question": "What was the old Tier 1 hotel accommodation limit?",
+    "expected_answer": "The old limit was INR 4500, but this policy is superseded and must not be used for current claims.",
+    "expected_source": "G1_policy_4.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "TC06",
+    "question": "Does the company reimburse personal entertainment expenses?",
+    "expected_answer": "No. Personal entertainment expenses are not reimbursable.",
+    "expected_source": "G1_policy_3.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "TC07",
+    "question": "Can employees use personal devices to access production systems?",
+    "expected_answer": "No. Company laptops are mandatory for confidential information access, and personal devices are not permitted for production access.",
+    "expected_source": "G1_policy_2.pdf",
+    "expected_page": 1
+  },
+  {
+    "id": "TC08",
+    "question": "Does the policy provide free international holiday trips?",
+    "expected_answer": "Not specified in the provided policies.",
+    "expected_source": null,
+    "expected_page": null
   }
 ]

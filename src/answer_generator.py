@@ -4,7 +4,7 @@ import os
 FALLBACK = "Not specified in the provided policies."
 
 def generate_answer(question, chunks, use_llm=False):
-    evidence = [c for c in chunks if c.get("score", 0) >= 0.06]
+    evidence = [c for c in chunks if c.get("score", 0) >= 0.20]
     if not evidence:
         return FALLBACK, []
     citations = list(dict.fromkeys((c["source"], c["page"]) for c in evidence))
