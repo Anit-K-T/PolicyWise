@@ -36,7 +36,7 @@ The system uses a Retrieval-Augmented Generation (RAG) approach to retrieve rele
 | Text Chunking | Custom sentence-aware chunking |
 | Embeddings | Sentence Transformers MiniLM |
 | Vector Search | FAISS / NumPy |
-| Retrieval | Semantic vector search (after Phase 1) |
+| Retrieval | Semantic vector search using FAISS / NumPy |
 | Answer Generation | Optional OpenAI API |
 | Interface | Streamlit |
 
@@ -59,8 +59,16 @@ PolicyWise/
 │   ├── G1_policy_3.pdf
 │   └── G1_policy_4.pdf
 │
+├── ingestion/
+│   ├── __init__.py
+│   ├── extract.py
+│   ├── chunking.py
+│   ├── embeddings.py
+│   ├── index_store.py
+│   ├── pipeline.py
+│   └── ingest.py
+│
 ├── src/
-│   ├── ingestion.py
 │   ├── retrieval.py
 │   └── answer_generator.py
 │
@@ -69,15 +77,23 @@ PolicyWise/
 │   └── test_results.md
 │
 ├── docs/
-│   └── architecture.md
+│   ├── architecture.md
+│   └── Ingestion_Report.md
+│
+├── scripts/
+│   └── sanity_check.py
+│
+├── tests/
+│   └── test_ingestion.py
 │
 ├── app.py
+├── config.py
 ├── requirements.txt
+├── .env.example
 ├── .gitignore
 └── README.md
 ```
 
-*The structure may be updated as the implementation progresses.*
 
 ## Installation and Setup
 

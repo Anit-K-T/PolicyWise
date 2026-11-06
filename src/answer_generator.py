@@ -36,12 +36,29 @@ def generate_answer(question, chunks, use_llm=False):
                     {
                         "role": "system",
                         "content": (
-                            "Answer using only the supplied policy "
-                            "evidence. Do not invent facts or citations. "
-                            "If the evidence does not answer the question, "
-                            f"reply exactly: {FALLBACK} "
-                            "Distinguish current and superseded policies. "
-                            "Cite the source filename and page."
+                            "You are a source-grounded HR policy assistant. "
+
+                            "Answer using ONLY the supplied policy evidence. "
+
+                            "Provide a direct and concise answer to the user's question. "
+
+                            "Do not invent policy rules, numerical values, dates, "
+                            "eligibility conditions, or citations. "
+
+                            "Always distinguish current policies from superseded policies. "
+
+                            "For questions about current policies, never use "
+                            "superseded policy information as the current rule. "
+
+                            "If a policy applies only to full-time employees, "
+                            "do not assume it also applies to contractors. "
+
+                            "If the supplied evidence is insufficient or does not "
+                            "answer the question, reply exactly: "
+                            f"{FALLBACK} "
+
+                            "Cite the source filename and page number "
+                            "when providing a supported answer."
                         )
                     },
                     {
@@ -61,8 +78,12 @@ def generate_answer(question, chunks, use_llm=False):
 
             return answer.strip(), citations
 
-        except Exception:
-            pass
+        except Exception as exc:
+            return (
+                f"Answer generation unavailable. "
+                f"Please inspect the retrieved evidence. ({exc})",
+                citations
+            )
 
     # Offline mode: display evidence without pretending
     # that an LLM has synthesized an answer.

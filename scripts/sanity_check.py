@@ -40,7 +40,10 @@ def main() -> None:
         show(args.query)
         return
 
-        questions_path = Path(args.questions)
+    questions_path = Path(args.questions)
+
+    if not questions_path.exists():
+        sys.exit(f"Questions file not found: {questions_path}")
 
     raw = questions_path.read_text(encoding="utf-8")
 
@@ -60,9 +63,10 @@ def main() -> None:
 
         hits = show(item["question"])
 
-        expected_source = item.get(
-            "source",
-            item.get("expected_source", "none")
+        expected_source = (
+            item.get("source")
+            or item.get("expected_source")
+            or "none"
         )
 
         if expected_source == "none":

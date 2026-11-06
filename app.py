@@ -1,4 +1,4 @@
-
+import os
 import streamlit as st
 
 from pathlib import Path
@@ -82,7 +82,8 @@ if st.button("Get Answer", type="primary"):
 
             answer, citations = generate_answer(
                 question,
-                results
+                results,
+                use_llm=bool(os.getenv("OPENAI_API_KEY"))
             )
 
         st.markdown("### Answer")
