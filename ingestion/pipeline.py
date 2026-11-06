@@ -19,13 +19,14 @@ from .chunking import Chunk, chunk_document, embedding_text
 from .embeddings import get_embedder
 from .extract import PolicyDocument, extract_pdf
 from .index_store import META_FILE, VectorStore
+from config import DATA_DIR, INDEX_DIR
 
 log = logging.getLogger(__name__)
 
 
 def run_ingestion(
-    pdf_dir: str | Path = "data/pdfs",
-    index_dir: str | Path = "index",
+    pdf_dir: str | Path =  DATA_DIR,
+    index_dir: str | Path = INDEX_DIR,
     chunk_size: int = 400,
     overlap: int = 100,
     embedder_choice: str = "auto",

@@ -1,33 +1,64 @@
 
 import streamlit as st
-import json
+
 from pathlib import Path
+
+from config import INDEX_DIR, TOP_K
+from ingestion import VectorStore, get_embedder
 
 from src.retrieval import PolicyRetriever
 from src.answer_generator import generate_answer, FALLBACK
 
-st.set_page_config(page_title="PolicyWise", page_icon="📘", layout="centered")
+
+st.set_page_config(
+    page_title="PolicyWise",
+    page_icon="📘",
+    layout="centered"
+)
 
 st.title("📘 PolicyWise")
 st.subheader("Source-Grounded HR Policy Assistant")
-st.write("Ask questions about company HR policies and receive answers grounded in the provided policy documents.")
 
-index_file = Path("index/chunks.jsonl")
+st.write(
+    "Ask questions about company HR policies "
+    "and receive answers grounded in policy documents."
+)
 
-if not index_file.exists():
-    st.error("Policy index not found. Please run the ingestion pipeline first.")
+# Load persistent vector index
+try:
+    vector_store = VectorStore.load(INDEX_DIR)
+
+    embedder_name = vector_store.meta.get("embedder", "")
+
+    embedder_choice = (
+        "hash"
+        if embedder_name.startswith("hashing")
+        else "minilm"
+    )
+
+    embedder = get_embedder(embedder_choice)
+
+    if embedder.name != embedder_name:
+        raise ValueError(
+            "Embedding model does not match the saved index."
+        )
+
+    retriever = PolicyRetriever(
+        vector_store,
+        embedder
+    )
+
+except Exception as exc:
+    st.error(f"Unable to load policy index: {exc}")
+    st.info(
+        "Run: python -m ingestion.ingest --rebuild"
+    )
     st.stop()
 
-with index_file.open("r", encoding="utf-8") as file:
-    chunks = [json.loads(line) for line in file if line.strip()]
 
-for chunk in chunks:
-    chunk["source"] = chunk["doc_name"]
-    chunk["version"] = chunk["status"]
-
-retriever = PolicyRetriever(chunks)
 
 st.divider()
+
 st.markdown("### Ask an HR Policy Question")
 
 question = st.text_area(
@@ -37,36 +68,57 @@ question = st.text_area(
 )
 
 if st.button("Get Answer", type="primary"):
-    if question.strip():
-        results = retriever.retrieve(question, k=3)
 
-        current_results = [
-            item for item in results
-            if item.get("status") == "current"
-        ]
+    if not question.strip():
+        st.warning("Please enter a question.")
 
-        # Prefer current policies when available.
-        selected = current_results if current_results else results
+    else:
+        with st.spinner("Searching policy documents..."):
 
-        answer, citations = generate_answer(question, selected)
+            results = retriever.retrieve(
+                question,
+                k=TOP_K
+            )
+
+            answer, citations = generate_answer(
+                question,
+                results
+            )
 
         st.markdown("### Answer")
         st.write(answer)
 
         if citations:
             st.markdown("### Sources")
+
             for source, page in citations:
                 st.write(f"- {source}, Page {page}")
-        else:
+
+        if answer == FALLBACK:
             st.info(FALLBACK)
-    else:
-        st.warning("Please enter a question.")
+
+        if results:
+            with st.expander("Inspect retrieved evidence"):
+                for i, item in enumerate(results, 1):
+                    st.markdown(
+                        f"**Result {i}: {item['source']}**"
+                    )
+
+                    st.caption(
+                        f"Page: {item['page']} | "
+                        f"Status: {item.get('status')} | "
+                        f"Score: {item['score']:.4f}"
+                    )
+
+                    st.write(item["text"])
+                    st.divider()
 
 st.divider()
 
 with st.expander("About PolicyWise"):
     st.write(
         "PolicyWise is a Retrieval-Augmented Generation (RAG) "
-        "assistant that answers employee questions using official "
-        "HR policy documents and provides source references."
+        "assistant that answers employee questions using "
+        "policy documents and provides source references."
     )
+

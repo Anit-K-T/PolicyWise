@@ -69,3 +69,12 @@ index/
 
 # Environment variables
 .env
+
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+
+index/
+.pytest_cache/

@@ -6,11 +6,12 @@ import json
 import logging
 
 from ingestion import run_ingestion
+from config import DATA_DIR
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Ingest HR policy PDFs into a FAISS index.")
-    ap.add_argument("--pdf-dir", default="data/pdfs", help="folder with the policy PDFs")
+    ap.add_argument("--pdf-dir",default=str(DATA_DIR),help="Folder containing policy PDFs")
     ap.add_argument("--index-dir", default="index", help="where the index is written")
     ap.add_argument("--chunk-size", type=int, default=400, help="max characters per chunk")
     ap.add_argument("--overlap", type=int, default=100, help="characters repeated between chunks")

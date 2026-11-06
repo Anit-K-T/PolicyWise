@@ -30,15 +30,15 @@ The system uses a Retrieval-Augmented Generation (RAG) approach to retrieve rele
 
 ## Technology Stack
 
-| Component | Technology |
+| Component | technology |
 |---|---|
-| Programming Language | Python |
-| Frontend | Streamlit |
-| PDF Processing | PyMuPDF |
-| Text Chunking | LangChain Text Splitters |
-| Retrieval | TF-IDF and Cosine Similarity |
+| PDF Processing | PyMuPDF / PyPDF |
+| Text Chunking | Custom sentence-aware chunking |
+| Embeddings | Sentence Transformers MiniLM |
+| Vector Search | FAISS / NumPy |
+| Retrieval | Semantic vector search (after Phase 1) |
 | Answer Generation | Optional OpenAI API |
-| Version Control | Git and GitHub |
+| Interface | Streamlit |
 
 ## Project Architecture
 
@@ -113,8 +113,13 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+### 5. Generate the policy index
 
-### 5. Run the application
+```bash
+python -m ingestion.ingest --pdf-dir data --index-dir index
+```
+
+### 6. Run the application
 
 ```bash
 streamlit run app.py
