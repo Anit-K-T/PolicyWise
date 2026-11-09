@@ -33,12 +33,38 @@ The system follows these stages:
 
 - Programming Language: Python
 - Frontend: Streamlit
-- PDF Processing: PyMuPDF
-- Retrieval: TF-IDF and Cosine Similarity
-- Answer Generation: Optional OpenAI API
+- PDF Processing: PyPDF with pdfplumber fallback
+- Text Chunking: Sentence-aware chunking with overlap
+- Embeddings: Sentence Transformers MiniLM
+- Offline Embeddings: Hashing-based embedding fallback
+- Vector Database: FAISS with NumPy fallback
+- Similarity Search: Cosine similarity
+- Retrieval: Top-3 semantic vector retrieval
+- Answer Generation: OpenAI API with offline evidence fallback
+- Version Handling: Current and superseded policy metadata
 - Version Control: Git and GitHub
 
-## 5. Reliability and Safety
+## 5. Architecture Diagram
+
+```mermaid
+flowchart TD
+    A[HR Policy PDFs] --> B[PDF Extraction]
+    B --> C[Page Metadata]
+    C --> D[Text Chunking]
+    D --> E[Overlapping Chunks]
+    E --> F[Embedding Generation]
+    F --> G[FAISS / NumPy Vector Index]
+
+    H[User Question] --> I[Query Embedding]
+    I --> J[Vector Retrieval]
+    G --> J
+    J --> K[Policy Version Handling]
+    K --> L[Top-3 Relevant Passages]
+    L --> M[Answer Generation]
+    M --> N[Source Filename and Page]
+    N --> O[Streamlit Response]
+
+## 6. Reliability and Safety
 
 - Answers must be grounded in the provided HR policy documents.
 - Source references should include the PDF filename and page number.
@@ -46,6 +72,6 @@ The system follows these stages:
 - Superseded policy information should not be presented as current policy.
 - API credentials must be stored securely using environment variables.
 
-## 6. Project Architecture Status
+## 7. Project Architecture Status
 
 The architecture describes the planned integration of document ingestion, retrieval, answer generation and the Streamlit interface. Implementation details may be updated as the modules are integrated and tested.

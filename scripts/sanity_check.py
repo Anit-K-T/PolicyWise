@@ -19,7 +19,7 @@ from ingestion import VectorStore, get_embedder  # noqa: E402
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--index-dir", default="index")
-    ap.add_argument("--questions", default="data/G1_questions.jsonl")
+    ap.add_argument("--questions", default="evaluation/test_questions.json")
     ap.add_argument("--query", help="run one free-text query instead of the question file")
     ap.add_argument("-k", type=int, default=3)
     args = ap.parse_args()
@@ -40,22 +40,54 @@ def main() -> None:
         show(args.query)
         return
 
+    questions_path = Path(args.questions)
+
+    if not questions_path.exists():
+        sys.exit(f"Questions file not found: {questions_path}")
+
+    raw = questions_path.read_text(encoding="utf-8")
+
+    if questions_path.suffix == ".jsonl":
+        items = [
+            json.loads(line)
+            for line in raw.splitlines()
+            if line.strip()
+        ]
+    else:
+        items = json.loads(raw)
+
     ok = total = 0
-    for line in Path(args.questions).read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        item = json.loads(line)
-        print(f"\nQ: {item['question']}   (expected source: {item['source']})")
+
+    for item in items:
+        print(f"\nQ: {item['question']}")
+
         hits = show(item["question"])
-        if item["source"] == "none":
-            print("   -> no source expected; the answer layer must abstain "
-                  f"(top score {hits[0][0]:.3f}).")
+
+        expected_source = (
+            item.get("source")
+            or item.get("expected_source")
+            or "none"
+        )
+
+        if expected_source == "none":
+            print("   -> Requires answer-layer abstention.")
             continue
+
         total += 1
-        found = any(c["doc_name"] == item["source"] for _, c in hits)
+
+        found = any(
+            c["doc_name"] == expected_source
+            for _, c in hits
+        )
+
         ok += found
-        print(f"   -> source in top-{args.k}: {'YES' if found else 'NO'}")
-    print(f"\nRecall@{args.k} on questions with a source: {ok}/{total}")
+
+        print(
+            f"   -> Source in top-{args.k}: "
+            f"{'YES' if found else 'NO'}"
+        )
+
+    print(f"\nRecall@{args.k}: {ok}/{total}")
 
 
 if __name__ == "__main__":

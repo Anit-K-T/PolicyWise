@@ -30,15 +30,15 @@ The system uses a Retrieval-Augmented Generation (RAG) approach to retrieve rele
 
 ## Technology Stack
 
-| Component | Technology |
+| Component | technology |
 |---|---|
-| Programming Language | Python |
-| Frontend | Streamlit |
-| PDF Processing | PyMuPDF |
-| Text Chunking | LangChain Text Splitters |
-| Retrieval | TF-IDF and Cosine Similarity |
+| PDF Processing | PyMuPDF / PyPDF |
+| Text Chunking | Custom sentence-aware chunking |
+| Embeddings | Sentence Transformers MiniLM |
+| Vector Search | FAISS / NumPy |
+| Retrieval | Semantic vector search using FAISS / NumPy |
 | Answer Generation | Optional OpenAI API |
-| Version Control | Git and GitHub |
+| Interface | Streamlit |
 
 ## Project Architecture
 
@@ -59,8 +59,16 @@ PolicyWise/
 │   ├── G1_policy_3.pdf
 │   └── G1_policy_4.pdf
 │
+├── ingestion/
+│   ├── __init__.py
+│   ├── extract.py
+│   ├── chunking.py
+│   ├── embeddings.py
+│   ├── index_store.py
+│   ├── pipeline.py
+│   └── ingest.py
+│
 ├── src/
-│   ├── ingestion.py
 │   ├── retrieval.py
 │   └── answer_generator.py
 │
@@ -69,15 +77,23 @@ PolicyWise/
 │   └── test_results.md
 │
 ├── docs/
-│   └── architecture.md
+│   ├── architecture.md
+│   └── Ingestion_Report.md
+│
+├── scripts/
+│   └── sanity_check.py
+│
+├── tests/
+│   └── test_ingestion.py
 │
 ├── app.py
+├── config.py
 ├── requirements.txt
+├── .env.example
 ├── .gitignore
 └── README.md
 ```
 
-*The structure may be updated as the implementation progresses.*
 
 ## Installation and Setup
 
@@ -113,8 +129,13 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+### 5. Generate the policy index
 
-### 5. Run the application
+```bash
+python -m ingestion.ingest --pdf-dir data --index-dir index
+```
+
+### 6. Run the application
 
 ```bash
 streamlit run app.py

@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 from ingestion import VectorStore, chunk_document, extract_pdf, get_embedder, run_ingestion  # noqa: E402
 from ingestion.chunking import chunk_page  # noqa: E402
 
-PDF_DIR = ROOT / "data" / "pdfs"
+PDF_DIR = ROOT / "data"
 
 
 @pytest.fixture()
